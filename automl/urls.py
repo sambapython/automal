@@ -23,10 +23,15 @@ from django.views.generic import CreateView, ListView, TemplateView
 from django.conf.urls.static import static
 from auto.models import Document
 from django.conf import settings
+from django.contrib.auth.views import login_required
 urlpatterns = [
+    path('^accounts/', include('allauth.urls')),
     path("",TemplateView.as_view(
         template_name="auto/home.html"
         )),
+    path("index/",login_required(TemplateView.as_view(
+        template_name="auto/index.html"
+        ))),
     path('admin/', admin.site.urls),
     path("upload_build/",upload_doc_view),
     re_path("upload_predict/",upload_predict_view),

@@ -17,20 +17,23 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.core.files import File
 from django.http import HttpResponse
+from django.contrib.auth.views import login_required
 
 from auto.forms import DocumentForm, PredictDocumentForm
 from auto.models import Document, PredictDocument
+
+@login_required
 def predict_doc_list_view(request, pk=None):
 	docs=[]
 	if not pk:
 		docs = PredictDocument.objects.all()
 	return render(request, "auto/predict_document_list.html", {"data":docs})
-
+@login_required
 def build_delete_view(request, pk):
 	doc = Document.objects.get(pk=pk)
 	doc.delete()
 	return redirect("/list_models/")
-
+@login_required
 def upload_doc_view(request):
 	if request.method=="POST":
 		data = request.POST
@@ -46,7 +49,7 @@ def upload_doc_view(request):
 		form = DocumentForm()
 		return render(request,"auto/document_form.html",
 			{"form":form})
-
+@login_required
 def upload_predict_view(request):
 	if request.method=="POST":
 		data = request.POST
@@ -65,12 +68,12 @@ def upload_predict_view(request):
 		form = PredictDocumentForm()
 		return render(request,"auto/document_form.html",
 			{"form":form})
-
+@login_required
 def predict_view(request, pk):
 	doc = PredictDocument.objects.get(pk=pk)
 	data = predict(doc, doc.doc)
 	return HttpResponse(data.to_html())
-	
+@login_required	
 def build_view(request,pk):
 	doc = Document.objects.get(pk=pk)
 	generate_model(doc)
